@@ -1,0 +1,3 @@
+likelihood:
+  DESI_Like:
+    python_path: /users/sm1wg/ExLike/DESI_Like

@@ -1,0 +1,13 @@
+likelihood:
+  desi_lrg:
+    python_path: /users/sm1wg/ExLike/desi_BAO_DR1
+  desi_lrg_elg:
+    python_path: /users/sm1wg/ExLike/desi_BAO_DR1
+  desi_elg:
+    python_path: /users/sm1wg/ExLike/desi_BAO_DR1
+  desi_lyaqso:
+    python_path: /users/sm1wg/ExLike/desi_BAO_DR1
+  desi_qso:
+    python_path: /users/sm1wg/ExLike/desi_BAO_DR1
+  desi_bgs:
+    python_path: /users/sm1wg/ExLike/desi_BAO_DR1

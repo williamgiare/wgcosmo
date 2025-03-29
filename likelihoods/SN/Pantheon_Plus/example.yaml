@@ -1,0 +1,13 @@
+likelihood:
+  Pantheon_Plus:
+    python_path: /users/sm1wg/ExLike/Pantheon_Plus
+params:
+  M:
+    prior:
+      min: -30
+      max: -10
+    ref:
+      dist: norm
+      loc: -19.2
+      scale: 0.5
+    proposal: 0.05
