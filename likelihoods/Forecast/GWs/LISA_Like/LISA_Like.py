@@ -21,7 +21,7 @@ class LISA_Like(Likelihood):
         
         current_path = os.path.abspath(__file__)
         like_path= os.path.abspath(os.path.join(current_path, os.pardir))
-        self.LISA_path=like_path +'/data/LISA_3.txt'
+        self.LISA_path=like_path +'/data/LISA.txt'
         
         LISA_GWs = pd.read_csv(self.LISA_path, sep='\s+', header=None, names=['z', 'DL', 'dDL']).sort_values(by='z')
         
