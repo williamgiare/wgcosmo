@@ -1,6 +1,6 @@
 ## Bayesian Evidence Estimation
 
-This directory provides a wrapper for computing the **Bayesian Evidence (BE)** from Markov Chain Monte Carlo (MCMC) chains produced with **Cobaya**.
+This directory provides a wrapper for computing the **Bayesian Evidence (BE)** from Markov Chain Monte Carlo (MCMC) chains produced with **Cobaya**, using [MCEvidence](https://github.com/yabebalFantaye/MCEvidence)).
 
 ---
 #### Validation and Consistency Checks
