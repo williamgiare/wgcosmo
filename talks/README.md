@@ -1,7 +1,5 @@
 # Talks
 
----
-
 ## Overview
 
 Over recent years, preparing academic and non-academic lectures and presentations has become a significant part of my work. My talks span a wide range of topics that reflect the breadth of my research activity, from early-universe physics and dark energy to large-scale structure and gravitational wave cosmology. 
