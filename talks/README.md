@@ -36,15 +36,15 @@ If you find this material helpful for your research or presentation, feel free t
 - [Inflation and the Hubble Tension](https://drive.google.com/file/d/1lwm8roxUppBQA_7WVeBG0NC_8uNsHfnF/view?usp=sharing) — The Dark Side of the Universe, Corfu, 14.09.2024
 - [Inflation and the Hubble Tension](https://drive.google.com/file/d/1cTAh8JM4hnSjScg9Xqa1WTyCCbtiqEHk/view?usp=sharing) — CosmoVerse @Krakow, Krakow, 09.07.2024
 - [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1sPC8-B18Dtu9cCyfmlSWZozmdjUXGvJt/view?usp=sharing) — Lancaster University, 01.07.2024
-- [Dark Interaction in the CMB](https://drive.google.com/file/d/1SPDxPVgijrKqpF34r0cqAVrPQBP9KtvV/view?usp=sharing) — Majorana-Raychaudhuri seminar, 21.06.2024
-- [Dark Interaction in the CMB](https://drive.google.com/file/d/1MGGhDC6re5d2ltCfapwgDnLEnWaJehj9/view?usp=sharing) — Louvain U., CP3, 04.06.2024
-- [Dark Interaction in the CMB](https://drive.google.com/file/d/1AOgie39FC-7_vAWIMxYdD45B0NYtWDTi/view?usp=sharing) — U. Montpellier 2, LUPM, 09.04.2024 
+- [Dark Interactions in the CMB](https://drive.google.com/file/d/1SPDxPVgijrKqpF34r0cqAVrPQBP9KtvV/view?usp=sharing) — Majorana-Raychaudhuri seminar, 21.06.2024
+- [Dark Interactions in the CMB](https://drive.google.com/file/d/1MGGhDC6re5d2ltCfapwgDnLEnWaJehj9/view?usp=sharing) — Louvain U., CP3, 04.06.2024
+- [Dark Interactions in the CMB](https://drive.google.com/file/d/1AOgie39FC-7_vAWIMxYdD45B0NYtWDTi/view?usp=sharing) — U. Montpellier 2, LUPM, 09.04.2024 
 - [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1txOUw6QbbowAD98o_0BdyYjH-C1uyjJJ/view?usp=sharing) — CRAG SEMINAR, The University of Sheffield, 06.03.2024
 - [Neutrino-Dark Matter Scattering from Cosmology](https://drive.google.com/file/d/1BSMJWazvUCSe31DZ2seQJx1qDfT-bD5M/view?usp=sharing) — UNIVERSUM, Rome, 22.02.2024
 
 #### 2023 
 - [Dark Interactions in the CMB](https://drive.google.com/file/d/10riP-KB8GV10CMYlABmmXGwHV40d5ads/view?usp=sharing) — Queen Mary University of London, 22.11.2023 
-- [Cosmology From the Smallest Scales](https://drive.google.com/file/d/1-0-kjdvXkuBjpJho32BIcrNI1oSyu6zn/view?usp=sharing) — Corfù, 11.09.2023
+- [Cosmology from the Smallest Scales](https://drive.google.com/file/d/1-0-kjdvXkuBjpJho32BIcrNI1oSyu6zn/view?usp=sharing) — Corfù, 11.09.2023
 - [A Look at the Hubble Tension from a CMB Perspective](https://drive.google.com/file/d/1Xsn_0eL_NFOfYrgOZUvUyg46iVuwLRBW/view?usp=sharing) — MIAPbP, Munich, 26.07.2023
 - [CMB Anomalies and the Hubble Tension](https://drive.google.com/file/d/1aNP-X-u7977RyuAphKWDS5laI6RxNb2g/view?usp=sharing) — IFPU, Trieste, 22.06.2023
 - [Assessing the consistency of CMB Observations to probe new physics](https://drive.google.com/file/d/1xkT9vfPZNr7PneNneQgL32uEsCaIhjYh/view?usp=sharing) — Cosmoverse@Lisbon Lisbon, 31.05.2023
