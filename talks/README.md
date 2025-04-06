@@ -20,7 +20,6 @@ If you find this material helpful for your research or presentation, feel free t
 - [An introduction to Inflationary Cosmology, from Theory to Data-Analysis I of II](https://drive.google.com/file/d/1u5bNgpo2clXl7S0-aF9nXL0ctW4TkxKp/view?usp=sharing)
 - [An introduction to Inflationary Cosmology, from Theory to Data-Analysis II of II](https://drive.google.com/file/d/1IWKukS9ABp5dQawW6Quns62nfTrnE73C/view?usp=sharing)
 
-
 ### Selected Academic Talks
 
 #### 2025
