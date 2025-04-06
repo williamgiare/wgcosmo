@@ -54,7 +54,7 @@ If you find this material helpful for your research or presentation, feel free t
 - [A look beyond ΛCDM](https://drive.google.com/file/d/1JIVoC3d7M-a_1eeV_tI5OZL-Pch5amyJ/view?usp=sharing) — Corfu, Greece, 07.09.2022
 - [Beyond ΛCDM, Challenges and prospects](https://drive.google.com/file/d/1fwquDv1FoGYiSljiFCQIxbCpEH8tEGrP/view?usp=sharing)  — Florence University, 05.05.2022
 
-#### pre-2022
+#### Pre-2022
 - No saved data found. The journey fades into the void 🎮
 
 [^1]: Also, if you notice any typos or issues with the materials shared, please [let me know](mailto:w.giare@sheffield.ac.uk)!
