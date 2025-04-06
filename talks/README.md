@@ -1,5 +1,7 @@
 # Talks
 
+---
+
 ## Overview
 
 Over recent years, preparing academic and non-academic lectures and presentations has become a significant part of my work. My talks span a wide range of topics that reflect the breadth of my research activity, from early-universe physics and dark energy to large-scale structure and gravitational wave cosmology. 
@@ -15,14 +17,10 @@ If you find this material helpful for your research or presentation, feel free t
 
 ## Presentation Material:
 
----
-
 ### Selected Academic Lectures 
 
 - [An introduction to Inflationary Cosmology, from Theory to Data-Analysis I of II](https://drive.google.com/file/d/1u5bNgpo2clXl7S0-aF9nXL0ctW4TkxKp/view?usp=sharing)
 - [An introduction to Inflationary Cosmology, from Theory to Data-Analysis II of II](https://drive.google.com/file/d/1IWKukS9ABp5dQawW6Quns62nfTrnE73C/view?usp=sharing)
-
----
 
 ### Selected Academic Talks
 
