@@ -12,7 +12,6 @@ I will do my best to keep the content on this webpage as up-to-date as possible,
 
 If you find this material helpful for your research or presentation, feel free to use it at your convenience. In this case, however, please acknowledge my GitHub `wgcosmo`. [^1]
 
----
 
 ## Presentation Material:
 
@@ -32,16 +31,16 @@ If you find this material helpful for your research or presentation, feel free t
 
 #### 2024
 - [Neutrino Cosmology, 2024 Edition](https://drive.google.com/file/d/10QoWwDYoM8zw3uhRJF0DrF8GpPkReum4/view?usp=sharing) — AstroParticle Symposium, Pascal Institute of the Paris-Saclay University, 22.11.2024
-- [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/12BG-g-eiKjEKK7wSXszZ7nz51lH2Dy2o/view?usp=sharing) Southampton University, Cosmology Seminar, 18.10.2024 
-- [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1pAbOdoKwdYV16IeKEH9CV99A_0SAXaNh/view?usp=sharing) Institute of Cosmology and Gravitation (ICG), Portsmouth, 16.10.2024
+- [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/12BG-g-eiKjEKK7wSXszZ7nz51lH2Dy2o/view?usp=sharing) — Southampton University, Cosmology Seminar, 18.10.2024 
+- [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1pAbOdoKwdYV16IeKEH9CV99A_0SAXaNh/view?usp=sharing) — Institute of Cosmology and Gravitation (ICG), Portsmouth, 16.10.2024
 - [Inflation and the Hubble Tension](https://drive.google.com/file/d/1lwm8roxUppBQA_7WVeBG0NC_8uNsHfnF/view?usp=sharing) — The Dark Side of the Universe, Corfu, 14.09.2024
 - [Inflation and the Hubble Tension](https://drive.google.com/file/d/1cTAh8JM4hnSjScg9Xqa1WTyCCbtiqEHk/view?usp=sharing) — CosmoVerse @Krakow, Krakow, 09.07.2024
 - [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1sPC8-B18Dtu9cCyfmlSWZozmdjUXGvJt/view?usp=sharing) — Lancaster University, 01.07.2024
 - [Dark Interaction in the CMB](https://drive.google.com/file/d/1SPDxPVgijrKqpF34r0cqAVrPQBP9KtvV/view?usp=sharing) — Majorana-Raychaudhuri seminar, 21.06.2024
 - [Dark Interaction in the CMB](https://drive.google.com/file/d/1MGGhDC6re5d2ltCfapwgDnLEnWaJehj9/view?usp=sharing) — Louvain U., CP3, 04.06.2024
 - [Dark Interaction in the CMB](https://drive.google.com/file/d/1AOgie39FC-7_vAWIMxYdD45B0NYtWDTi/view?usp=sharing) — U. Montpellier 2, LUPM, 09.04.2024 
-- [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1txOUw6QbbowAD98o_0BdyYjH-C1uyjJJ/view?usp=sharing) CRAG SEMINAR, The University of Sheffield, 06.03.2024
-- [Neutrino-Dark Matter Scattering from Cosmology](https://drive.google.com/file/d/1BSMJWazvUCSe31DZ2seQJx1qDfT-bD5M/view?usp=sharing) — Rome, 22.02.2024
+- [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1txOUw6QbbowAD98o_0BdyYjH-C1uyjJJ/view?usp=sharing) — CRAG SEMINAR, The University of Sheffield, 06.03.2024
+- [Neutrino-Dark Matter Scattering from Cosmology](https://drive.google.com/file/d/1BSMJWazvUCSe31DZ2seQJx1qDfT-bD5M/view?usp=sharing) — UNIVERSUM, Rome, 22.02.2024
 
 #### 2023 
 - [Dark Interactions in the CMB](https://drive.google.com/file/d/10riP-KB8GV10CMYlABmmXGwHV40d5ads/view?usp=sharing) — Queen Mary University of London, 22.11.2023 
@@ -57,7 +56,6 @@ If you find this material helpful for your research or presentation, feel free t
 - [Beyond ΛCDM, Challenges and prospects](https://drive.google.com/file/d/1fwquDv1FoGYiSljiFCQIxbCpEH8tEGrP/view?usp=sharing)  — Florence University, 05.05.2022
 
 #### pre-2022
-Everything was not Saved and Lost :(
-
+- No saved data found. The journey fades into the void 🎮
 
 [^1]: Also, if you notice any typos or issues with the materials shared, please [let me know](mailto:w.giare@sheffield.ac.uk)!
