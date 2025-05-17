@@ -23,6 +23,7 @@ If you find this material helpful for your research or presentation, feel free t
 ### Selected Academic Talks
 
 #### 2025
+- [Cosmological Constraints on $\nu_s$](https://drive.google.com/file/d/1F93A-zmsk_D7rlQowOoNFb_wWdlRWhLc/view?usp=sharing)
 - [QCD Axion Cosmology](https://drive.google.com/file/d/1tCi5GpO66xBulDSWU-1fj7rsx411FRmv/view?usp=sharing) — HEP Seminar, Sheffield University, 12.03.2025
 - [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1Q2NXTrs306fSUHFEnul7Fe034DLnt_kC/view?usp=sharing) — University of Science and Technology of China Early Universe & AliCPT Forum, 26.02.2025
 - [Do We Need to Rethink Inflation?](https://drive.google.com/file/d/1gdMQqJAt4vzHqNVCyderIu3zM-XtNc7V/view?usp=sharing) — Cosmology Seminar, ITP, Heidelberg, 04.02.2025
