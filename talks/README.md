@@ -24,7 +24,7 @@ If you find this material helpful for your research or presentation, feel free t
 ### Selected Academic Talks
 
 #### 2026
-- [Is the cosmological blanket too short? An Interconnected view of cosmoic Tensions](https://drive.google.com/file/d/1VuF87gRjNAUw4Y7DLe0zdtXriv2JbhaS/view?usp=sharing) - Cosmology Colloquium, Presidency University, Kolkata, 06.03.2026
+- [Is the cosmic blanket too short? An interconnected view of cosmic tensions](https://drive.google.com/file/d/1VuF87gRjNAUw4Y7DLe0zdtXriv2JbhaS/view?usp=sharing) - Cosmology Colloquium, Presidency University, Kolkata, 06.03.2026
 - [The state of Cosmology (circa 2026)](https://drive.google.com/file/d/1AmB5XPDM2OBYNrf-KiSOqHtswnGdzmMj/view) - Hawaii University Cosmology Group Meetings, Honolulu, 06.02.2026
   
 #### 2025
