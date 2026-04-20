@@ -24,6 +24,7 @@ If you find this material helpful for your research or presentation, feel free t
 ### Selected Academic Talks
 
 #### 2026
+- [DESI, The Hubble Tension and the Dynamics of Dark Energy](https://drive.google.com/file/d/1tdRAxWBs96RkfPW-eUvk-AUnttORyVkw/view?usp=sharing) - Dark Energy from Home, Remote presentaion, 21.04.02026
 - [Is the cosmic blanket too short? An interconnected view of cosmic tensions](https://drive.google.com/file/d/1VuF87gRjNAUw4Y7DLe0zdtXriv2JbhaS/view?usp=sharing) - Cosmology Colloquium, Presidency University, Kolkata, 06.03.2026
 - [The state of Cosmology (circa 2026)](https://drive.google.com/file/d/1AmB5XPDM2OBYNrf-KiSOqHtswnGdzmMj/view) - Hawaii University Cosmology Group Meetings, Honolulu, 06.02.2026
   
