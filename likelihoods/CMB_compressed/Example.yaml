@@ -1,0 +1,82 @@
+theory:
+  classy:
+    extra_args:
+      non linear:
+      N_ncdm: 1
+      N_ur: 2.0328
+likelihood:
+  compressed_CMB:
+    #python_path: /home/giare/codes/ExLike/compressed_CMB
+    python_path: .
+    compression_basis: [omega_b, omega_m, 1/theta_d]
+    z_drag_n: 20001
+params:
+  A_s:
+    value: 2.10531290e-09
+    latex: A_\mathrm{s}
+  n_s:
+    value: 0.96451859
+    latex: n_\mathrm{s}
+  theta_s_100:
+    prior:
+      min: 0.5
+      max: 10
+    ref:
+      dist: norm
+      loc: 1.0416
+      scale: 0.0004
+    proposal: 0.0002
+    latex: 100\theta_\mathrm{s}
+  H0:
+    latex: H_0
+  omega_b:
+    prior:
+      min: 0.005
+      max: 0.1
+    ref:
+      dist: norm
+      loc: 0.0224
+      scale: 0.0001
+    proposal: 0.0001
+    latex: \Omega_\mathrm{b} h^2
+  omega_cdm:
+    prior:
+      min: 0.001
+      max: 0.99
+    ref:
+      dist: norm
+      loc: 0.12
+      scale: 0.001
+    proposal: 0.0005
+    latex: \Omega_\mathrm{c} h^2
+  Omega_m:
+    latex: \Omega_\mathrm{m}
+  omegamh2:
+    derived: 'lambda Omega_m, H0: Omega_m*(H0/100)**2'
+    latex: \Omega_\mathrm{m} h^2
+  m_ncdm:
+    value: 0.06
+    renames: mnu
+  Omega_Lambda:
+    latex: \Omega_\Lambda
+  tau_reio:
+    value: 0.054371701
+    latex: \tau_\mathrm{reio}
+  rs_drag:
+    latex: r_\mathrm{drag}
+  z_d:
+    latex: z_\mathrm{drag}
+  rs_star:
+    latex: r_\mathrm{\star}
+  da_star:
+    latex: D_{A}(z_{\star})
+  z_star:
+    latex: z_{\star}
+  theta_star_100:
+    latex: 100\theta_{\star}
+sampler:
+  mcmc:
+    oversample_power: 0.4
+    proposal_scale: 1.9
+    Rminus1_stop: 0.01
+output: test/test
