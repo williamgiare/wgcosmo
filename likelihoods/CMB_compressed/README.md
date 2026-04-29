@@ -3,7 +3,7 @@
 Compressed Planck CMB likelihood for Cobaya.
 
 - It reads a data vector and covariance matrix from `compressed_data_vectors/*.dat` and evaluates the corresponding Gaussian likelihood.
-- The compressed files are obtained with `Covariance_Matrix.ipynb`, by compressing a $\Lambda$CDM Planck 2018 run using Plik high-$\ell$ TTTEEE + low-$\ell$ TT + low-$\ell$ EE, without lensing.
+- The compressed files are obtained with `Covariance_Matrix.ipynb`, by compressing a $\Lambda$CDM Planck 2018 run using Plik high $\ell$ TTTEEE + low $\ell$ TT + low $\ell$ EE, without lensing.
 - `Covariance_Matrix.ipynb` can also be used to extract covariance matrices for any other CMB run.
 
 ## Compression basis
