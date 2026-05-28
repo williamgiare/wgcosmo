@@ -24,6 +24,7 @@ If you find this material helpful for your research or presentation, feel free t
 ### Selected Academic Talks
 
 #### 2026
+- [The Impact of the DESI results on the nature of Dark Energy](https://drive.google.com/file/d/1KHPYzmAU435UoSZpqMcyEk2JJIkzfAXF/view?usp=drive_link) - Vulcano Workshop 2026 "Frontier Objects in Astrophysics and Particle Physics", 26.05.2026
 - [DESI-rable Dark Sector for the Hubble Tension](https://drive.google.com/file/d/1v3jkGsijsZ6nxXjPJhj3k8KsEAQCtLAw/view?usp=sharing) - Cosmoverse Online Seminars, Remote presentation, 14.05.2026
 - [DESI, The Hubble Tension and the Dynamics of Dark Energy](https://drive.google.com/file/d/1tdRAxWBs96RkfPW-eUvk-AUnttORyVkw/view?usp=sharing) - Dark Energy from Home, Remote presentaion, 21.04.02026
 - [Is the cosmic blanket too short? An interconnected view of cosmic tensions](https://drive.google.com/file/d/1VuF87gRjNAUw4Y7DLe0zdtXriv2JbhaS/view?usp=sharing) - Cosmology Colloquium, Presidency University, Kolkata, 06.03.2026
