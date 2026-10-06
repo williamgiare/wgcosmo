@@ -66,6 +66,23 @@ If you use material from this repository in your research or presentations, plea
 
 Citation metadata are provided in [CITATION.cff](CITATION.cff).
 
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@misc{Giare2026wgcosmo,
+  author       = {Giar\`{e}, William},
+  title        = {wgcosmo},
+  year         = {2026},
+  howpublished = {Zenodo},
+  doi          = {10.5281/zenodo.23197101},
+  url          = {https://doi.org/10.5281/zenodo.23197101},
+  note         = {Software}
+}
+```
+
+</details>
+
 ### Important:
 
 - Although I usually review and debug code quite carefully, *bugs or mistakes can still be present*: this repository only includes a subset of my material, and not everything here has been used in publications (for which my cross-checking and testing become significantly more rigorous).
