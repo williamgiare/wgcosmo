@@ -33,7 +33,7 @@ This repository is organized as follows.
 - **`talks/`**  
   This folder contains materials used for presentations, talks, lectures, and similar events. It includes slides, notes, and any associated scripts or data used for these talks. 
 
-- ** `tests/`**
+- **`tests/`**
   This folder contains numerical regression checks for the likelihoods and statistical tools, integration checks with Cobaya/CAMB/CLASS, and checks of selected plotting helpers.
 
 - **`utils/`**  
@@ -60,7 +60,7 @@ This repository, `wgcosmo`, is primarily maintained by me ([William Giarè](http
 
 ### How to cite
 
-If you use material from this repository in your research or presentations, please cite:
+If you use material from this repository in your research or presentations, please cite this repository as follows:
 
 <details>
 <summary>BibTeX</summary>
