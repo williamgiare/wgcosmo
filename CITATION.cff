@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use material from this repository, please cite it using these metadata."
+type: software
+title: wgcosmo
+authors:
+  - family-names: "Giarè"
+    given-names: "William"
+    affiliation: "University of Hawaiʻi at Mānoa"
+    orcid: "https://orcid.org/0000-0002-4012-9285"
+doi: "10.5281/zenodo.23197101"
+url: "https://github.com/williamgiare/wgcosmo"
+repository-code: "https://github.com/williamgiare/wgcosmo"
+date-released: "2026-10-06"
+license: MIT
+abstract: >-
+  A collection of numerical tools, likelihood implementations, statistical
+  utilities, plotting notebooks, notes, and presentation materials developed
+  for cosmological research, teaching, and scientific dissemination.
