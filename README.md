@@ -62,10 +62,6 @@ This repository, `wgcosmo`, is primarily maintained by me ([William Giarè](http
 
 If you use material from this repository in your research or presentations, please cite:
 
-> Giarè, W. (2026). *wgcosmo* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.23197101](https://doi.org/10.5281/zenodo.23197101)
-
-Citation metadata are provided in [CITATION.cff](CITATION.cff).
-
 <details>
 <summary>BibTeX</summary>
 
