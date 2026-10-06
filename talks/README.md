@@ -72,4 +72,4 @@ If you find this material helpful for your research or presentation, feel free t
 #### Pre-2022
 - No saved data found. The journey fades into the void 🎮
 
-[^1]: Also, if you notice any typos or issues with the materials shared, please [let me know](mailto:w.giare@sheffield.ac.uk)!
+[^1]: Also, if you notice any typos or issues with the materials shared, please [let me know](mailto:giare@hawaii.edu)!

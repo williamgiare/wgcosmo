@@ -1,114 +1,107 @@
-###########################################################################################################################
-# SUSPICIOUSNESS
-# William Giarè
-# V3 (February 2023)
-###########################################################################################################################
-import pandas as pd
-import numpy as np
-import sys, os
-from scipy.special import gamma, factorial, erfinv
-import scipy.integrate as integrate
-from scipy.integrate import quad
+"""Gaussian approximation to suspiciousness from weighted MCMC chains.
+
+The chi-square calibration assumes approximately Gaussian posteriors in the
+chosen common parameter space; it is not the general evidence-based statistic.
+"""
+
+from pathlib import Path
 import re
-from IPython.display import display
+
+import numpy as np
+import pandas as pd
+from scipy.stats import chi2, norm
 
 
-def integrand(x,d):
-    A=1/(2**(d/2)*gamma(d/2))
-    return A*np.exp(-x/2) * x**(d/2 - 1)
+def integrand(x, d):
+    """Chi-square density, retained for compatibility with older notebooks."""
+    return chi2.pdf(x, d)
 
 
-def get_chain(root,params,fburn=0.3,verbose=False):
-    
-    _params=[0]*len(params)
-    n_chains=0
+def get_chain(root, params, fburn=0.3, verbose=False, include_weights=False):
+    """Read every numbered Cobaya chain, discarding a fraction of each file.
 
-    
-    keep_params= params
-    
-  
-    if os.path.isfile(root+'.1.txt'):
+    With include_weights=False the historical parameter-only DataFrame is
+    returned. Statistical calculations must request include_weights=True.
+    """
+    if not np.isfinite(fburn) or not 0 <= fburn < 1:
+        raise ValueError("fburn must be a fraction in [0, 1)")
+    params = list(params)
+    if not params or len(set(params)) != len(params) or "weight" in params:
+        raise ValueError("params must contain distinct parameter names, excluding weight")
+    root = Path(root)
+    pattern = re.compile(re.escape(root.name) + r"\.(\d+)\.txt$")
+    files = sorted(
+        (p for p in root.parent.glob(root.name + ".*.txt") if pattern.fullmatch(p.name)),
+        key=lambda p: int(pattern.fullmatch(p.name).group(1)),
+    )
+    if not files:
+        raise FileNotFoundError(f"No numbered chains found with root: {root}")
+    chains = []
+    for path in files:
+        with path.open() as handle:
+            header = handle.readline().lstrip("#").split()
+        if not header or len(header) != len(set(header)):
+            raise ValueError(f"Invalid chain header in {path}")
+        frame = pd.read_csv(path, sep=r"\s+", comment="#", skiprows=1, names=header)
+        required = ["weight"] + params
+        missing = set(required) - set(frame.columns)
+        if missing:
+            raise ValueError(f"Missing columns in {path}: {sorted(missing)}")
+        frame = frame.iloc[int(fburn * len(frame)):][required].astype(float)
+        if frame.empty or not np.isfinite(frame.to_numpy()).all():
+            raise ValueError(f"Empty or non-finite chain after burn-in: {path}")
+        if (frame.weight < 0).any():
+            raise ValueError(f"Negative chain weights in {path}")
+        frame = frame.loc[frame.weight > 0]
+        if frame.empty:
+            raise ValueError(f"No positive chain weights in {path}")
+        chains.append(frame)
         if verbose:
-            print("Reading chain:",root+'.1.txt')
-        chain_1=pd.read_csv(root+'.1.txt', sep='\s+')
-        chain_1=pd.read_csv(root+'.1.txt', sep='\s+',header=None, skiprows=int(fburn*len(chain_1)+1), names=chain_1.keys()[1:len(chain_1.keys())])
-        chain=chain_1
-        n_chains+=1
-
-    if os.path.isfile(root+'.2.txt'):
-        if verbose:
-            print("Reading chain:",root+'.2.txt')
-        chain_2=pd.read_csv(root+'.2.txt', sep='\s+')
-        chain_2=pd.read_csv(root+'.2.txt', sep='\s+',header=None, skiprows=int(fburn*len(chain_2)+1), names=chain_2.keys()[1:len(chain_2.keys())])
-        chain=pd.concat([chain,chain_2], axis=0)
-        n_chains+=1
-
-    if os.path.isfile(root+'.3.txt'):
-        if verbose:
-            print("Reading chain:",root+'.3.txt')
-        chain_3=pd.read_csv(root+'.3.txt', sep='\s+')
-        chain_3=pd.read_csv(root+'.3.txt', sep='\s+',header=None, skiprows=int(fburn*len(chain_3)+1), names=chain_3.keys()[1:len(chain_3.keys())])
-        chain=pd.concat([chain,chain_3], axis=0)
-        n_chains+=1
-
-    if os.path.isfile(root+'.4.txt'):
-        if verbose:
-            print("Reading chain:",root+'.3.txt')
-        chain_4=pd.read_csv(root+'.4.txt', sep='\s+')
-        chain_4=pd.read_csv(root+'.4.txt', sep='\s+',header=None, skiprows=int(fburn*len(chain_4)+1), names=chain_4.keys()[1:len(chain_4.keys())])
-        chain=pd.concat([chain,chain_4], axis=0)
-        n_chains+=1
-    
-    if os.path.isfile(root+'.5.txt'):
-        print("The code can read only up to 4 chains, all the pthers will be ignored. However adding more chains is trivial, see sampler.py")
-        
-
-    if n_chains==0:
-        logging.error("No chains found with root:", root)
-        
-    else:
-         if verbose==True:
-            print("removing burn-in:",fburn)
-            print("\nConsidering only the following params:",end=' ')
-            print(keep_params)
-            print("\n")
-    
-    return chain[keep_params]
+            print(f"Reading {path}: {len(frame)} rows after burn-in")
+    result = pd.concat(chains, ignore_index=True)
+    return result if include_weights else result[params]
 
 
+def _weighted_moments(chain, params):
+    values = chain[params].to_numpy(dtype=float)
+    weights = chain.weight.to_numpy(dtype=float)
+    mean = np.average(values, axis=0, weights=weights)
+    centered = values - mean
+    # Posterior population moments: invariant under rescaling or splitting weights.
+    covariance = (centered.T * weights) @ centered / weights.sum()
+    return mean, covariance
 
-def get_sus(root_A , root_B, params, fburn=0.3, verbose=True, get_results=False, get_latex=False, model=None):
-    
-    d=int(len(params))
-    
+
+def get_sus(root_A, root_B, params, fburn=0.3, verbose=True,
+            get_results=False, get_latex=False, model=None):
+    """Return (chi2, logS, sigma) when get_results=True, as in the old API."""
+    params = list(params)
+    chain_A = get_chain(root_A, params, fburn, verbose, include_weights=True)
+    chain_B = get_chain(root_B, params, fburn, verbose, include_weights=True)
+    mean_A, cov_A = _weighted_moments(chain_A, params)
+    mean_B, cov_B = _weighted_moments(chain_B, params)
+    delta = mean_A - mean_B
+    covariance = cov_A + cov_B
+    try:
+        factor = np.linalg.cholesky(covariance)
+        whitened = np.linalg.solve(factor, delta)
+    except np.linalg.LinAlgError as exc:
+        raise ValueError("Combined posterior covariance must be positive definite; "
+                         "remove fixed or linearly dependent parameters") from exc
+    statistic = float(whitened @ whitened)
+    d = len(params)
+    logS = (d - statistic) / 2
+    # Survival functions avoid quadrature over an unnecessarily large interval
+    # and the cancellation in erfinv(1-p) at large tensions.
+    p = float(chi2.sf(statistic, d))
+    sigma = float(norm.isf(p / 2))
     if verbose:
-        print("------------------------------------------------------------------------------------------------------------------")
-        print("Quantifying the global parameter tensions for the two entry MCMC chains by means of the Suspiciousness Statistic")
-        print("                             (see arXiv:2007.08496 and arXiv:2209.14054)                                          ")
-        print("------------------------------------------------------------------------------------------------------------------")
-        print("\n\n")
-
-    chain_A = get_chain(root_B , params, verbose=verbose, fburn=fburn)
-    chain_B = get_chain(root_A , params, verbose=verbose, fburn=fburn)
-
-    Chi2=np.dot((chain_A.mean()-chain_B.mean()),np.dot(np.linalg.inv(chain_A.cov()+chain_B.cov()),(chain_A.mean()-chain_B.mean())))
-    logS=(d/2)-(Chi2/2)
-    IntS=quad(integrand,Chi2, 10000, args=d)
-    p=IntS[0]
-    sigma=2**0.5 * erfinv(1-p)
-    
-    if verbose==True:
-        print("------------------------------")
-        print("SuStat")
-        print("------------------------------")
-        print("Param-space dimension:",d)
-        print("Chi2=","{0:.3g}".format(Chi2))
-        print("p=","{0:.3g}".format(p))
-        print("logS=","{0:.3g}".format(logS))
-        print("sigma=","{0:.3g}".format(sigma))
-        print("------------------------------")
-    if get_results==True:
-        return Chi2, logS, sigma
-    if get_latex == True:
-        print(model,"&","$",d,"$ &","$","{0:.3g}".format(Chi2),"$ &","$","{0:.3g}".format(p),"$ &","$","{0:.3g}".format(logS),"$ &","$","{0:.3g}".format(sigma),"\,\sigma$ \\\\")
+        print("SuStat (Gaussian approximation, weighted posterior moments)")
+        print(f"Dimension: {d}; Chi2={statistic:.6g}; p={p:.6g}; "
+              f"logS={logS:.6g}; sigma={sigma:.6g}")
+    if get_results:
+        return statistic, logS, sigma
+    if get_latex:
+        print(f"{model} & ${d}$ & ${statistic:.3g}$ & ${p:.3g}$ & "
+              f"${logS:.3g}$ & ${sigma:.3g}\\,\\sigma$ \\\\")
         return sigma

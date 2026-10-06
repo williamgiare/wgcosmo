@@ -7,10 +7,8 @@ import os,sys
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong DESI-BAO ELG')
-except:
+except ImportError:
     class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
         pass
     
 
@@ -28,6 +26,8 @@ class desi_elg(Likelihood):
         self.covmat_z_132 = [[0.4761,-0.128671],[-0.128671,0.1764]]
     
         
+        self._chol_covmat_z_132 = la.cho_factor(np.asarray(self.covmat_z_132), lower=True)
+
     def get_requirements(self):
         """
          return dictionary specifying quantities calculated by a theory code are needed
@@ -50,8 +50,6 @@ class desi_elg(Likelihood):
         
         DM=da*(1. + self.z_eff)/rs
         DH= (2.998 * 10**5)/H/rs
-        print('DM_z_132',DM)
-        print('DH_z_132',DH)
         
         x=[ [DM-self.data_DM_z_132] , [DH-self.data_DH_z_132] ]
         #print('delta_z_132',x)
@@ -59,8 +57,7 @@ class desi_elg(Likelihood):
     
         data_array = np.append(data_array, x)
             
-        chi2 = np.dot(np.dot(data_array,np.linalg.inv(self.covmat_z_132)),data_array)
+        chi2 = float(data_array @ la.cho_solve(self._chol_covmat_z_132, data_array))
         
         loglike = - 0.5*chi2
-        print('loglike=',loglike,'\n')
         return loglike

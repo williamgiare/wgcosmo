@@ -7,4 +7,4 @@ This folder contains `python` scripts and notebooks that can be usefull in a mor
 - `save_1D_pdf.ipynb` is a minimal script for saving the 1D posterior distribution in a `.dat` file
 - 
 
-[^1]: If you notice any typos or issues with the materials shared, please [let me know](mailto:w.giare@sheffield.ac.uk)!  
+[^1]: If you notice any typos or issues with the materials shared, please [let me know](mailto:giare@hawaii.edu)!

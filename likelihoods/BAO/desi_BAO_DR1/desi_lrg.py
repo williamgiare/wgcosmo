@@ -7,10 +7,8 @@ import os,sys
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong DESI-BAO LRG')
-except:
+except ImportError:
     class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
         pass
     
 
@@ -20,7 +18,7 @@ class desi_lrg(Likelihood):
     
     def initialize(self):
         
-        self.z_eff=[0.51,0.71]
+        self.z_eff=[0.51,0.706]
         
         self.z_051=0.51
         self.z_071=0.706
@@ -35,6 +33,9 @@ class desi_lrg(Likelihood):
         self.covmat_z_071 = [[0.1024,-0.08064],[-0.08064,0.360]]
     
         
+        self._chol_covmat_z_051 = la.cho_factor(np.asarray(self.covmat_z_051), lower=True)
+        self._chol_covmat_z_071 = la.cho_factor(np.asarray(self.covmat_z_071), lower=True)
+
     def get_requirements(self):
         """
          return dictionary specifying quantities calculated by a theory code are needed
@@ -62,13 +63,9 @@ class desi_lrg(Likelihood):
         
         DM_z_051=da_z_051*(1. + self.z_051)/rs 
         DH_z_051= (2.998 * 10**5)/H_z_051/rs
-        print('DM_z_051=',DM_z_051)
-        print('DH_z_051=',DH_z_051)
         
         DM_z_071=da_z_071*(1. + self.z_071)/rs 
         DH_z_071= (2.998 * 10**5)/H_z_071/rs
-        print('DM_z_071=',DM_z_071)
-        print('DH_z_071=',DH_z_071)
         
         x_z_051=[ [DM_z_051-self.data_DM_z_051] , [DH_z_051-self.data_DH_z_051] ]
         x_z_071=[ [DM_z_071-self.data_DM_z_071] , [DH_z_071-self.data_DH_z_071] ]
@@ -78,12 +75,11 @@ class desi_lrg(Likelihood):
         data_array_z_051 = np.append(data_array_z_051, x_z_051)
         data_array_z_071 = np.append(data_array_z_071, x_z_071)
             
-        chi2_z_051 = np.dot(np.dot(data_array_z_051,np.linalg.inv(self.covmat_z_051)),data_array_z_051)
-        chi2_z_071 = np.dot(np.dot(data_array_z_071,np.linalg.inv(self.covmat_z_071)),data_array_z_071)
+        chi2_z_051 = float(data_array_z_051 @ la.cho_solve(self._chol_covmat_z_051, data_array_z_051))
+        chi2_z_071 = float(data_array_z_071 @ la.cho_solve(self._chol_covmat_z_071, data_array_z_071))
         
         loglike_z_051 = - 0.5*chi2_z_051
         loglike_z_071 = - 0.5*chi2_z_071
         
         loglike=loglike_z_051+loglike_z_071
-        print('loglike=',loglike,'\n')
         return loglike

@@ -1,6 +1,6 @@
 likelihood:
   Pantheon_Plus:
-    python_path: /users/sm1wg/ExLike/Pantheon_Plus
+    python_path: .
 params:
   M:
     prior:

@@ -3,6 +3,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Repo Status](https://img.shields.io/badge/repo-public-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23197101.svg)](https://doi.org/10.5281/zenodo.23197101)
 
 ---
 
@@ -32,6 +33,9 @@ This repository is organized as follows.
 - **`talks/`**  
   This folder contains materials used for presentations, talks, lectures, and similar events. It includes slides, notes, and any associated scripts or data used for these talks. 
 
+- ** `tests/`**
+  This folder contains numerical regression checks for the likelihoods and statistical tools, integration checks with Cobaya/CAMB/CLASS, and checks of selected plotting helpers.
+
 - **`utils/`**  
   This folder collects general-purpose utility functions and scripts that I’ve accumulated over time. Many are reusable tools that I’ve found handy across different projects.
 
@@ -40,17 +44,32 @@ This repository is organized as follows.
 
 ---
 
+## Verification
+
+Dependencies are listed in `requirements.txt`. For numerical regression
+checks and real Cobaya/CAMB/CLASS integration tests, see [tests/README.md](tests/README.md).
+The tests use the packaged data and temporary synthetic chains; historical
+publication notebooks can also require external chains, datasets or modified
+theory codes, as documented in their folders.
+
+---
+
 ## Credits, Contributions & Usage
 
 This repository, `wgcosmo`, is primarily maintained by me ([William Giarè](https://github.com/williamgiare)) and is shared in the spirit of open science. Most of the scripts, notebooks, and methods in this repository were developed for personal research, teaching, student mentorship, or as a way to explore ideas in a more informal context.
 
-### Important:
+### How to cite
 
-- If you use any material from this repository in your work (e.g., publications or presentations), please give credit by *acknowledging its use and referencing this GitHub repository* with the following link: [https://github.com/williamgiare/wgcosmo](https://github.com/williamgiare/wgcosmo).
+If you use material from this repository in your research or presentations, please cite:
+
+> Giarè, W. (2026). *wgcosmo* [Software]. Zenodo. [https://doi.org/10.5281/zenodo.23197101](https://doi.org/10.5281/zenodo.23197101)
+
+Citation metadata are provided in [CITATION.cff](CITATION.cff).
+
+### Important:
 
 - Although I usually review and debug code quite carefully, *bugs or mistakes can still be present*: this repository only includes a subset of my material, and not everything here has been used in publications (for which my cross-checking and testing become significantly more rigorous).
 
-- Contributions and suggestions are welcome. Feel free to open an issue or submit a pull request if you'd like to collaborate or improve something. For any feedback, feel free to [contact me](mailto:w.giare@sheffield.ac.uk). 
+- Contributions and suggestions are welcome. Feel free to open an issue or submit a pull request if you'd like to collaborate or improve something. For any feedback, feel free to [contact me](mailto:giare@hawaii.edu).
 
 ---
-

@@ -11,4 +11,4 @@ This folder contains Jupyter notebooks that can be useful for familiarizing your
 
 To fully run these notebooks, you need to download the folder containing the data from [this link](https://drive.google.com/drive/u/0/folders/1nzajz_1KChoQHbWP0nrLBA7nXCnNmaXw).
 
-[^1]: If you notice any typos or issues with the materials shared, please [let me know](mailto:w.giare@sheffield.ac.uk)!
+[^1]: If you notice any typos or issues with the materials shared, please [let me know](mailto:giare@hawaii.edu)!

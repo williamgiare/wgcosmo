@@ -6,10 +6,8 @@ import os,sys
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importing DESI-BAO-DR2-BGS')
-except:
+except ImportError:
     class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
         pass
     
 

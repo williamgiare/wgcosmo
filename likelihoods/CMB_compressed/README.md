@@ -47,3 +47,11 @@ compressed_data_vectors/wb_wm_invThetadrag.dat
 ## Cobaya usage
 
 - see `Example.yaml`
+
+## CLASS derived parameters
+
+For a drag-angle basis, declare `z_d: {derived: true}` in the `params` block,
+as in `Example.yaml`. CLASS can calculate this parameter, but it is not in
+Cobaya's default advertised list. The included data files support `theta_s`,
+`1/theta_s`, and `1/theta_drag`. A direct `theta_drag` basis requires a matching
+custom `data_file`; no direct drag-angle compression file is distributed.

@@ -6,10 +6,8 @@ import os,sys
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong BAO_DES-y6 as cobaya likelihood')
-except:
+except ImportError:
     class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
         pass
 
 class DES_Y6_BAO(Likelihood):

@@ -8,16 +8,16 @@ likelihood:
     lmax: 4000
     variant: actplanck_baseline
   desi_bgs:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .
   desi_lrg1:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .
   desi_lrg2:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .
   desi_lrg3elg1:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .
   desi_elg2:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .
   desi_qso:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .
   desi_lya:
-    python_path: /users/sm1wg/ExLike/desi_BAO_DR2
+    python_path: .

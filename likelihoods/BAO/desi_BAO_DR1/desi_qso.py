@@ -7,10 +7,8 @@ import os,sys
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong DESI-BAO QSO')
-except:
+except ImportError:
     class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
         pass
     
 
@@ -48,11 +46,9 @@ class desi_qso(Likelihood):
         dr=( self.z_eff * (2.998 * 10**5) ) / H
         
         DV= ( (da*da*(1 + self.z_eff)*(1 + self.z_eff)*dr)**(1/3) ) /rs
-        print('DV_z_149',DV)
         
         chi2 = (DV-self.data_DV_z_149)**2 / (self.error_DV_z_149**2)
         
         loglike = - 0.5*chi2
-        print('loglike=',loglike,'\n')
         
         return loglike

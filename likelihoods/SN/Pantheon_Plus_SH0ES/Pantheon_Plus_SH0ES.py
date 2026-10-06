@@ -1,113 +1,74 @@
-import numpy as np
-import scipy.linalg as la
-import numexpr as ne
-import pandas as pd
-from pandas import read_table
-import os,sys
+"""Pantheon+ with SH0ES calibrators Gaussian likelihood.
 
-try:
-    import numexpr as ne
-except ImportError:
-    raise io_mp.MissingLibraryError(
-        "This likelihood has intensive array manipulations. You "
-        "have to install the numexpr Python package. Please type:\n"
-        "pip install numexpr")
-    
+Data and both covariance axes are selected with exactly the same row mask.
+"""
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy.linalg import cholesky, solve_triangular
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong Pantheon+ as cobaya likelihood')
-except:
-    class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
+except ImportError:
+    class Likelihood:
         pass
-    
+
 
 class Pantheon_Plus_SH0ES(Likelihood):
-    
-    name: str = "Pantheon_Plus_SH0ES"
-    
+    name = "Pantheon_Plus_SH0ES"
+    z_min = 0.023
+    path_covmat = None
+    path_lc = None
+
     def initialize(self):
+        here = Path(__file__).resolve().parent
+        self.path_covmat = self.path_covmat or str(here.parent / "data" / "Pantheon+SH0ES_STAT+SYS.cov")
+        self.path_lc = self.path_lc or str(here / "data" / "Pantheon+SH0ES.dat")
+        with open(self.path_lc) as handle:
+            names = handle.readline().lstrip("#").split()
+        self.light_curve_params = pd.read_csv(self.path_lc, sep=r"\s+", skiprows=1, names=names)
+        table = self.light_curve_params
+        required = {"zHD", "zHEL", "m_b_corr"} | {"IS_CALIBRATOR", "CEPH_DIST"}
+        if not required.issubset(table.columns):
+            raise ValueError(f"Missing supernova columns: {sorted(required - set(table.columns))}")
+        with open(self.path_covmat) as handle:
+            length = int(handle.readline())
+        if length != len(table):
+            raise ValueError("Supernova covariance dimensions do not match the data")
+        self.C00 = np.loadtxt(self.path_covmat, skiprows=1).reshape(length, length)
+        self.z = table.zHD.to_numpy(dtype=float)
+        self._calibrator = table.IS_CALIBRATOR.to_numpy() == 1
+        self._mask = (self.z > self.z_min) | self._calibrator
+        self.true_size = int(self._mask.sum())
+        if not self.true_size:
+            raise ValueError("No supernovae pass the selection")
+        covariance = self.C00[np.ix_(self._mask, self._mask)]
+        if not np.allclose(covariance, covariance.T, rtol=0, atol=5e-8):
+            raise ValueError("Supernova covariance is not symmetric")
+        # The released SH0ES matrix has rounding differences up to 3e-8.
+        # Preserve the lower-triangle convention of the original Cholesky.
+        self.selected_covariance = np.tril(covariance) + np.tril(covariance, -1).T
+        self.cov = cholesky(self.selected_covariance, lower=True)
+        self._selected = table.loc[self._mask]
+        self._selected_calibrator = self._calibrator[self._mask]
+        self._cosmological = ~self._selected_calibrator
+        self._z_cmb = self._selected.zHD.to_numpy(dtype=float)[self._cosmological]
+        self._z_hel = self._selected.zHEL.to_numpy(dtype=float)[self._cosmological]
+        self._observed = self._selected.m_b_corr.to_numpy(dtype=float)
 
-        current_path = os.path.abspath(__file__)
-        like_path= os.path.abspath(os.path.join(current_path, os.pardir))
-        self.path_covmat = like_path + '/data/Pantheon+SH0ES_STAT+SYS.cov'
-        self.path_lc = like_path + '/data/Pantheon+SH0ES.dat'
-
-        self.z_min=0.023
-        
-        #Reading the covariance matrix
-        with open(self.path_covmat, 'r') as text:
-            length = int(text.readline())
-        self.C00 = read_table(self.path_covmat).to_numpy().reshape((length, length))
-         
-        #Reading ligth curve params
-        with open(self.path_lc, 'r') as text:
-            clean_first_line = text.readline()[1:].strip()
-            names = [e.strip().replace('3rd', 'third')
-                     for e in clean_first_line.split()]
-        self.light_curve_params = read_table(self.path_lc, sep=' ', names=names, header=0, index_col=False)
-        
-        C00 = self.C00
-        covm = ne.evaluate("C00")
-        mask=[]
-        
-        sn = self.light_curve_params
-        true_size=0
-        ignored = 0
-        for ii in range(len(self.light_curve_params.zHD)):
-                if self.light_curve_params.zHD[ii]>self.z_min or self.light_curve_params.IS_CALIBRATOR[ii] > 0:
-                        true_size+=1
-                        mask.append(1)
-                else:
-                        ignored+=1
-                        mask.append(0)
-        self.true_size = true_size
-        newcovm = np.zeros((true_size,true_size), 'float64')
-        newcovm=covm[np.array(mask).astype(bool)].T[np.array(mask).astype(bool)].T
-        self.cov = la.cholesky(newcovm, lower=True, overwrite_a=True)
-        
     def get_requirements(self):
-        """
-         return dictionary specifying quantities calculated by a theory code are needed
-        """
-        reqs = {"angular_diameter_distance": {"z": self.light_curve_params.zHD[self.light_curve_params.zHD>self.z_min]} , 'M':None}
-
-        return reqs
-    
+        return {"angular_diameter_distance": {"z": self._z_cmb}, "M": None}
 
     def logp(self, **params_values):
-        
-        M = self.provider.get_param("M")
-        
-        redshifts = self.light_curve_params.zHD
-        size = redshifts.size
-        
-        moduli = np.empty((self.true_size, ))
-        Mb_obs = np.empty((self.true_size, ))
-        good_z = 0
-        
-        for index, row in self.light_curve_params.iterrows():
-            z_cmb = row['zHD']
-            z_hel = row['zHEL']
-            Mb_corr = row['m_b_corr']
-            if row['IS_CALIBRATOR'] == 1:
-                moduli[good_z] = row['CEPH_DIST']
-                Mb_obs[good_z] = Mb_corr
-                good_z+=1
-            else:
-                if z_cmb > self.z_min:
-                    moduli[good_z] = 5 * np.log10((1+z_cmb)*(1+z_hel)*self.provider.get_angular_diameter_distance(z_cmb)) + 25
-                    Mb_obs[good_z] = Mb_corr
-                    good_z+=1
-                else:
-                    pass
-                
-        residuals = np.empty((self.true_size,))
-        #sn = self.light_curve_params
-        residuals = Mb_obs - M
-        residuals -= moduli
-        residuals = la.solve_triangular(self.cov, residuals, lower=True, check_finite=False)
-        chi2 = (residuals**2).sum()
-        #print(chi2)
-        return -0.5 * chi2
+        moduli = np.empty(self.true_size)
+        if self._cosmological.any():
+            da = np.asarray(self.provider.get_angular_diameter_distance(self._z_cmb))
+            dl = (1 + self._z_cmb) * (1 + self._z_hel) * da
+            if not np.isfinite(dl).all() or np.any(dl <= 0):
+                return -np.inf
+            moduli[self._cosmological] = 5 * np.log10(dl) + 25
+        moduli[self._selected_calibrator] = self._selected.CEPH_DIST.to_numpy(dtype=float)[self._selected_calibrator]
+        residual = self._observed - self.provider.get_param("M") - moduli
+        whitened = solve_triangular(self.cov, residual, lower=True)
+        return -0.5 * float(whitened @ whitened)

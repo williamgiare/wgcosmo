@@ -1,9 +1,23 @@
 # Statistics
 
 ## Overview
-This folder contains `python` scripts that can be useful for statistical analyses. If you find this material helpful for making your own analyses I would appreciate it if you could acknowledge my GitHub `wgcosmo`.[^1]   
 
-- `SuStat` is a tool for getting the Suspiciousness from MCMC chains. 
-- `MCMC_Evidence` is a modified version of [MC-Evidence](https://github.com/yabebalFantaye/MCEvidence) adapted for `cobaya`
+This folder collects tools for statistical analysis and a link to the separate
+PostModes project. If these materials help with your analyses, please
+acknowledge the `wgcosmo` repository and follow any tool-specific citation
+instructions.[^1]
 
-[^1]: If you notice any typos or issues with the materials shared, please [let me know](mailto:w.giare@sheffield.ac.uk)! 
+- [SuStat](SuStat/) computes the Gaussian approximation to suspiciousness from
+  weighted MCMC chains.
+- [MCMC_Evidence](MCMC_Evidence/) adapts
+  [MCEvidence](https://github.com/yabebalFantaye/MCEvidence) to estimate Bayesian
+  evidence from Cobaya chains, including all sampled parameters and their
+  normalized priors.
+- [PostModes](postmodes/) points to the separate
+  [PostModes repository](https://github.com/williamgiare/postmodes), a Python
+  package for geometric comparison of posterior distributions through PCA and
+  generalized covariance eigenmodes. Source code, installation instructions,
+  documentation, and citation information are maintained there.
+
+[^1]: If you notice any typos or issues with the materials shared, please
+    [let me know](mailto:giare@hawaii.edu)!

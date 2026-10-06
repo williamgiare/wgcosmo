@@ -1,62 +1,35 @@
+"""Diagonal Gaussian forecast likelihood for angular BAO measurements."""
+from pathlib import Path
+
 import numpy as np
-import scipy.linalg as la
 import pandas as pd
-from pandas import read_table
-import os,sys
-    
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong EUCLID_Like as cobaya likelihood')
-except:
-    class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
+except ImportError:
+    class Likelihood:
         pass
-    
+
+
 class EUCLID_Like(Likelihood):
-    
-    name: str = "EUCLID_Like"
-    
+    name = "EUCLID_Like"
+    EUCLID_path = None
+
     def initialize(self):
-        
-        #self.EUCLID_path='./data/EUCLID.txt'
-        
-        current_path = os.path.abspath(__file__)
-        like_path= os.path.abspath(os.path.join(current_path, os.pardir))
-        self.EUCLID_path=like_path +'/data/EUCLID.txt'
-        
-        EUCLID_BAO = pd.read_csv(self.EUCLID_path, sep=',', header=None, names=['z','DA','dDA','theta', 'dtheta'], skiprows=1).sort_values(by='z')
+        self.EUCLID_path = self.EUCLID_path or str(Path(__file__).resolve().parent / "data/EUCLID.txt")
+        table = pd.read_csv(self.EUCLID_path, header=None, skiprows=1, names=["z", "DA", "dDA", "theta", "dtheta"]).to_numpy(dtype=float)
+        table = table[np.argsort(table[:, 0], kind="stable")]
+        self.z, self.data, self.error = table[:, 0], table[:, 3], table[:, 4]
+        self.num_BAO = len(table)
+        if not np.isfinite(table).all() or np.any(self.error <= 0):
+            raise ValueError("Forecast data must be finite with positive errors")
 
-        self.z = np.array([], 'float64')
-        self.data = np.array([], 'float64')
-        self.error = np.array([], 'float64')
-        
-        self.z=EUCLID_BAO['z']
-        self.data=EUCLID_BAO['theta']
-        self.error=EUCLID_BAO['dtheta']
-        self.num_BAO=len(self.z)
-    
-        
     def get_requirements(self):
-        """
-         return dictionary specifying quantities calculated by a theory code are needed
-        """
-        reqs = {"angular_diameter_distance": {"z": self.z}, 'rdrag' :None}
+        return {"angular_diameter_distance": {"z": self.z}, "rdrag": None}
 
-        return reqs
-    
-    
     def logp(self, **params_values):
-        
-        data_array = np.array([], 'float64')
-        chi2 = 0.
-        for i in range(self.num_BAO):
-            da = self.provider.get_angular_diameter_distance(self.z[i])
-            rs = self.provider.get_param("rdrag")           
-            theta = rs/(da*(1 + self.z[i]))*(180/np.pi)
-            x = (self.data[i]-theta)**2 / (self.error[i])**2
-            data_array = np.append(data_array, x)
-        chi2 =np.sum(data_array)
-        loglike = - 0.5*chi2
-        
-        return loglike
+        da = np.asarray(self.provider.get_angular_diameter_distance(self.z))
+        rs = self.provider.get_param("rdrag")
+        theory = np.rad2deg(rs / (da * (1 + self.z)))
+        residual = (self.data - theory) / self.error
+        return -0.5 * float(residual @ residual)

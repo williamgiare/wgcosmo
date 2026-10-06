@@ -28,6 +28,7 @@ import io
 import tempfile
 import os
 import glob
+import re
 import sys
 import math
 import numpy as np
@@ -77,7 +78,7 @@ desc = "Planck Chains MCEvidence. Returns the log Bayesian Evidence computed usi
 cite = """
 **
 When using this code in published work, please cite the following paper: **
-Heavens et. al. (2017) 
+Heavens et. al. (2017)
 Marginal Likelihoods from Monte Carlo Markov Chains
 https://arxiv.org/abs/1704.03472
 """
@@ -353,7 +354,9 @@ class SamplesMIXIN(object):
         """
 
         if nthin == 1:
-            return
+            if chain is not None:
+                return chain
+            return self.samples if name is None else self.data[name]
         try:
             if not chain is None:
                 self.logger.info("Thinning input sample chain ")
@@ -399,7 +402,7 @@ class SamplesMIXIN(object):
 
             nnew = len(new_weights)
             self.logger.info(
-                """Thinning with thin length={} 
+                """Thinning with thin length={}
                                 #old_chain={},#new_chain={}""".format(
                     nthin, norig, nnew
                 )
@@ -415,7 +418,7 @@ class SamplesMIXIN(object):
         given either name or chain samples, perform burn-in
         """
 
-        nstart = remove
+        nstart = int(remove)
 
         # no need to do anything if nither name or chain is given
         if chain is None and name is None:
@@ -498,7 +501,7 @@ class SamplesMIXIN(object):
         thin_ix = np.where(new_w > 0)[0]
         new_w = new_w[thin_ix]
 
-        text = """Thinning with Poisson Sampling: thinfrac={}. 
+        text = """Thinning with Poisson Sampling: thinfrac={}.
                     new_nsamples={},old_nsamples={}"""
         self.logger.debug(text.format(thin_retain_frac, len(thin_ix), len(w)))
 
@@ -519,94 +522,40 @@ class SamplesMIXIN(object):
         return thin_ix, new_w
 
     def weighted_thin(self, thin_unit, name="s1", weights=None):
-        """
-        Given a weight array, perform thinning.
-        If the all weights are equal, this should
-        be equivalent to selecting every N/((thinfrac*N)
-        where N=len(weights).
-        """
+        """Systematic thinning for positive, possibly fractional multiplicities."""
         if weights is None:
             weights = self.data[name].weights.copy()
+        weights = np.asarray(weights, dtype=float)
+        if thin_unit <= 0 or not np.isfinite(thin_unit):
+            raise ValueError("Thin unit must be finite and positive")
+        if not np.isfinite(weights).all() or np.any(weights < 0):
+            raise ValueError("Weights must be finite and non-negative")
+        step = thin_unit if thin_unit >= 1 else 1 / thin_unit
+        counts = np.diff(np.r_[0, np.floor(np.cumsum(weights) / step)]).astype(int)
+        indices = np.flatnonzero(counts)
+        if not len(indices):
+            raise ValueError("Thinning removes every sample")
+        return indices, counts[indices]
 
-        N = len(weights)
-        if thin_unit == 0:
-            return range(N), weights
-
-        if thin_unit < 1:
-            N2 = np.int(N * thin_unit)
-        else:
-            N2 = N // thin_unit
-
-        # bin the weight index to have the desired length
-        # this defines the bin edges
-        bins = np.linspace(-1, N, N2 + 1)
-        # this collects the indices of the weight array in each bin
-        ind = np.digitize(np.arange(N), bins)
-        # this gets the maximum weight in each bin
-        thin_ix = pd.Series(weights).groupby(ind).idxmax().tolist()
-        thin_ix = np.array(thin_ix, dtype=np.intp)
-        new_w = weights[thin_ix]
-
-        text = """Thinning with weighted binning: thinfrac={}. 
-                new_nsamples={},old_nsamples={}"""
-        self.logger.info(text.format(thin_unit, len(thin_ix), len(new_w)))
-
-        return thin_ix, new_w
 
     def thin_indices(self, factor, name="s1", weights=None):
-        """
-        Ref:
-        http://getdist.readthedocs.io/en/latest/_modules/getdist/chains.html#WeightedSamples.thin
-
-        Indices to make single weight 1 samples. Assumes integer weights.
-
-        :param factor: The factor to thin by, should be int.
-        :param weights: The weights to thin,
-        :return: array of indices of samples to keep
-        """
+        """Systematically thin integer multiplicities without expanding the chain."""
         if weights is None:
             weights = self.data[name].weights.copy()
+        weights = np.asarray(weights, dtype=float)
+        if not np.isfinite(weights).all() or np.any(weights < 0):
+            raise ValueError("Weights must be finite and non-negative")
+        if not np.allclose(weights, np.rint(weights), rtol=0, atol=1e-8):
+            raise ValueError("Integer weights required")
+        if factor < 1 or factor != int(factor):
+            raise ValueError("Thin factor must be a positive integer")
+        cumulative = np.cumsum(np.rint(weights))
+        counts = np.diff(np.r_[0, np.floor(cumulative / int(factor))]).astype(int)
+        indices = np.flatnonzero(counts)
+        if not len(indices):
+            raise ValueError("Thinning removes every sample")
+        return indices, counts[indices]
 
-        numrows = len(weights)
-        norm1 = np.sum(weights)
-        weights = weights.astype(np.int)
-        norm = np.sum(weights)
-
-        if abs(norm - norm1) > 1e-4:
-            print("Can only thin with integer weights")
-            raise
-        if factor != int(factor):
-            print("Thin factor must be integer")
-            raise
-        factor = int(factor)
-        if factor >= np.max(weights):
-            cumsum = np.cumsum(weights) // factor
-            # noinspection PyTupleAssignmentBalance
-            _, thin_ix = np.unique(cumsum, return_index=True)
-        else:
-            tot = 0
-            i = 0
-            thin_ix = np.empty(norm // factor, dtype=np.int)
-            ix = 0
-            mult = weights[i]
-            while i < numrows:
-                if mult + tot < factor:
-                    tot += mult
-                    i += 1
-                    if i < numrows:
-                        mult = weights[i]
-                else:
-                    thin_ix[ix] = i
-                    ix += 1
-                    if mult == factor - tot:
-                        i += 1
-                        if i < numrows:
-                            mult = weights[i]
-                    else:
-                        mult -= factor - tot
-                    tot = 0
-
-        return thin_ix, weights[thin_ix]
 
 
 # ==================
@@ -644,7 +593,7 @@ class MCSamples(SamplesMIXIN):
         chains = []
         for f in flist:
             self.logger.info("loading: " + f)
-            chains.append(np.loadtxt(f))
+            chains.append(np.loadtxt(f, ndmin=2))
         return chains
 
     def load_from_file(self, fname, **kwargs):
@@ -673,9 +622,12 @@ class MCSamples(SamplesMIXIN):
                 if idchain > 0:
                     flist = [fname + ".{}.txt".format(idchain)]
                 else:
-                    idpattern = kwargs.pop("idpattern", ".?.txt")
+                    idpattern = kwargs.pop("idpattern", ".*.txt")
                     self.logger.info(" loading files: " + fname + idpattern)
                     flist = glob.glob(fname + idpattern)
+                    if idpattern == ".*.txt":
+                        flist = [f for f in flist if re.fullmatch(re.escape(fname) + r"\.\d+\.txt", f)]
+                        flist.sort(key=lambda f: int(f.rsplit(".", 2)[1]))
 
         try:
             # load files
@@ -928,7 +880,7 @@ class MCEvidence(object):
                 powmin, powmax = self.get_batch_range()
                 for ix, nn in enumerate(self.nsample):
                     self.bsize[:, ix] = np.linspace(
-                        powmin, powmax, self.nbatch, dtype=np.int
+                        powmin, powmax, self.nbatch, dtype=int
                     )
                     self.powers[:, ix] = np.array([int(log10(x)) for x in self.nchain])
                 self.nchain = self.bsize
@@ -951,43 +903,19 @@ class MCEvidence(object):
         return s
 
     def get_covariance(self, s=None):
-        """
-        Estimate samples covariance matrix and eigenvectors
-        and eigenvalues using all samples from all chains
-        """
-
-        #
+        """Covariance used for an invertible whitening of the posterior samples."""
         if s is None:
-            self.logger.info("Estimating covariance matrix using all chains")
-            s, lnp, w = self.gd.all_sample_arrays()
-            s = s[:, 0 : self.ndim]
+            s, _, _ = self.gd.all_sample_arrays()
+            s = s[:, :self.ndim]
+        covariance = np.atleast_2d(np.cov(s.T))
+        eigenvalues, eigenvectors = np.linalg.eigh(covariance)
+        if not np.isfinite(eigenvalues).all() or np.any(eigenvalues <= 0):
+            raise ValueError("Posterior covariance must be positive definite; "
+                             "remove fixed or dependent parameters")
+        return {"cov": covariance, "posdef": True,
+                "J": math.sqrt(np.linalg.det(covariance)),
+                "eVec": eigenvectors, "eVal": eigenvalues}
 
-        self.logger.info("covariance matrix estimated using nsample=%s" % len(s))
-
-        ChainCov = np.cov(s.T)
-        eigenVal, eigenVec = np.linalg.eig(ChainCov)
-        if (eigenVal < 0).any():
-            self.logger.warn(
-                """Some of the eigenvalues of the 
-                covariance matrix are negative and/or complex:"""
-            )
-            for i, e in enumerate(eigenVal):
-                print("Eigenvalue Param_{} = {}".format(i, e))
-            # no diagonalisation
-            Jacobian = 1
-            diag = False
-        else:
-            # all eigenvalues are positive
-            Jacobian = math.sqrt(np.linalg.det(ChainCov))
-            diag = True
-
-        return {
-            "cov": ChainCov,
-            "posdef": diag,
-            "J": Jacobian,
-            "eVec": eigenVec,
-            "eVal": eigenVal,
-        }
 
     def get_samples(self, nsamples, istart=0, rand=False, name="s1", prewhiten=True):
         # If we are reading chain, it will be handled here
@@ -1022,38 +950,10 @@ class MCEvidence(object):
         if prewhiten:
             self.logger.debug("Prewhitenning chain partition: %s " % name)
             try:
-                # Covariance matrix of the samples, and eigenvalues (in w) and eigenvectors (in v):
-                ChainCov = np.cov(s.T)
-
-                eigenVal, eigenVec = np.linalg.eig(ChainCov)
-                # check for negative eigenvalues
-                if (eigenVal < 0).any():
-                    self.logger.warn(
-                        "Some of the eigenvalues of the covariance matrix are negative and/or complex:"
-                    )
-                    for i, e in enumerate(eigenVal):
-                        print("Eigenvalue Param_{} = {}".format(i, e))
-                    print("")
-                    print(
-                        "================================================================================="
-                    )
-                    print(
-                        "        Chain is not diagonalized! Estimated Evidence may not be accurate!       "
-                    )
-                    print(
-                        "              Consider using smaller set of parameters using --ndim              "
-                    )
-                    print(
-                        "================================================================================="
-                    )
-                    print("")
-                    # no diagonalisation
-                    Jacobian = 1
-                else:
-                    # all eigenvalues are positive
-                    Jacobian = math.sqrt(np.linalg.det(ChainCov))
-                    # diagonalise chain
-                    s = self.diagonalise_chain(s, eigenVec, eigenVal)
+                covstat = self.get_covariance(s=s)
+                Jacobian = covstat["J"]
+                eigenVal, eigenVec = covstat["eVal"], covstat["eVec"]
+                s = self.diagonalise_chain(s, eigenVec, eigenVal)
 
             except:
                 self.logger.error(
@@ -1377,7 +1277,7 @@ def iscosmo_param(p, cosmo_params=None):
     return p in cosmo_params_list
 
 
-def params_info(fname, cosmo=False, volumes={}):
+def params_info(fname, cosmo=False, volumes=None):
     """
     Extract parameter names, ranges, and prior space volume
     from CosmoMC *.ranges or montepython log.param file
@@ -1389,14 +1289,18 @@ def params_info(fname, cosmo=False, volumes={}):
     if glob.glob("{}*.ranges".format(fname)):
         logger.info("getting params info from COSMOMC file %s.ranges" % fname)
         par = np.genfromtxt(
-            fname + ".ranges", dtype=None, names=("name", "min", "max")
+            fname + ".ranges", dtype=None, names=("name", "min", "max"), encoding="utf-8", ndmin=1
         )  # ,unpack=True)
         parName = [name for name in par["name"]]
         parMin = par["min"]
         parMax = par["max"]
         for p, pmin, pmax in zip(parName, parMin, parMax):
-            # if parameter info is to be computed only for cosmological parameters
-            pcond = iscosmo_param(p) if cosmo else True
+            # The engine takes the first ndim columns, so silently filtering
+            # ranges by a name whitelist can pair the wrong columns and priors.
+            if cosmo and not iscosmo_param(p):
+                raise ValueError("Unrecognized parameter %s; use allparams=True "
+                                 "and include every sampled parameter" % p)
+            pcond = True
             # now get info
             if not np.isclose(pmax, pmin) and pcond:
                 parMC["name"].append(p)
@@ -1506,11 +1410,11 @@ def get_prior_volume(args, **kwargs):
         raise
         if args.priorvolume == None:
             logger.info(
-                """Error in reading cosmomc *.ranges or montepython log.param files. 
+                """Error in reading cosmomc *.ranges or montepython log.param files.
 These files are needed to compute prior volume"""
             )
             logger.info(
-                """If you choose to proceed with prior_volume=1, 
+                """If you choose to proceed with prior_volume=1,
 using the estimated evidence for model comparison will be incrporate the prior ratio"""
             )
 
@@ -1588,9 +1492,9 @@ if __name__ == "__main__":
         dest="thinlen",
         default=0,
         type=float,
-        help="""Thinning fraction. 
+        help="""Thinning fraction.
                              If 0<thinlen<1, MCMC weights are adjusted based on Poisson sampling
-                             If thinlen>1, weighted thinning based on getdist algorithm 
+                             If thinlen>1, weighted thinning based on getdist algorithm
                              If thinlen<0, thinning length will be the autocorrelation length of the chain
                              """,
     )
@@ -1618,7 +1522,7 @@ if __name__ == "__main__":
         action="store_true",
     )
 
-    desc = """        
+    desc = """
           Cross EVIDENCE IS COMPUTED USING TWO INDEPENDENT CHAINS. THIS MEANS
           NEAREST NEIGHBOUR OF POINT "A" IN AN MCMC SAMPLE MC1 IS SEARCHED IN MCMC SAMPLE MC2.
           THE ERROR ON THE EVIDENCE FROM (AUTO) EVIDENCE IS LARGER THAN THE CROSS EVIDENCE BY ~SQRT(2)
@@ -1628,7 +1532,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--cross",
-        help="""flag to split chain (s) to estimate cross Evidence. 
+        help="""flag to split chain (s) to estimate cross Evidence.
                                                       Otherwise auto Evidence is calculated. """
         + desc,
         action="store_true",

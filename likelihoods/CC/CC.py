@@ -1,66 +1,40 @@
+"""Cosmic chronometer likelihood, with covariance aligned to the data rows."""
+from pathlib import Path
+
 import numpy as np
-import scipy.linalg as la
 import pandas as pd
-from pandas import read_table
-import os,sys
+from scipy.linalg import cho_factor, cho_solve
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong CC  as cobaya likelihood')
-except:
-    class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
+except ImportError:
+    class Likelihood:
         pass
-        
+
 
 class CC(Likelihood):
-    
-    name: str = "CC"
-    
+    name = "CC"
+    CC_path = None
+    CovMat_path = None
+
     def initialize(self):
-        
-        
-        current_path = os.path.abspath(__file__)
-        like_path= os.path.abspath(os.path.join(current_path, os.pardir))
-        self.CC_path=like_path +'/data/CC.txt'
-        self.CovMat_path=like_path +'/data/CovMat.txt'
-        
-        
-        CC = pd.read_csv(self.CC_path, sep=',', header=None, names=['z','Hz','errHz','stat_contr', 'met_contr'], skiprows=1).sort_values(by='z')
-        self.covmat = np.loadtxt(self.CovMat_path,unpack=True)
+        here = Path(__file__).resolve().parent / "data"
+        self.CC_path = self.CC_path or str(here / "CC.txt")
+        self.CovMat_path = self.CovMat_path or str(here / "CovMat.txt")
+        table = pd.read_csv(self.CC_path, header=None, skiprows=1, names=["z", "Hz", "errHz", "stat_contr", "met_contr"]).to_numpy(dtype=float)
+        covariance = np.loadtxt(self.CovMat_path)
+        self.num_CC = len(table)
+        if covariance.shape != (self.num_CC, self.num_CC):
+            raise ValueError("CC covariance dimensions do not match the data")
+        order = np.argsort(table[:, 0], kind="stable")
+        self.z, self.data, self.error = table[order, :3].T
+        self.covmat = covariance[np.ix_(order, order)]
+        self._chol = cho_factor(self.covmat, lower=True)
 
-        self.z = np.array([], 'float64')
-        self.data = np.array([], 'float64')
-        self.error = np.array([], 'float64')
-        
-        self.z=CC['z']
-        self.data=CC['Hz']
-        self.error=CC['errHz']
-        self.num_CC=len(self.z)
-    
-        
     def get_requirements(self):
-        """
-         return dictionary specifying quantities calculated by a theory code are needed
-        """
-        reqs = {"Hubble": {"z": self.z}}
+        return {"Hubble": {"z": self.z}}
 
-        return reqs
-    
-    
     def logp(self, **params_values):
-        
-        data_array = np.array([], 'float64')
-        chi2 = 0.
-        
-        for i in range(self.num_CC):
-            theo = self.provider.get_Hubble(self.z[i],units="km/s/Mpc")
-            #print(theo)
-            x = (self.data[i]-theo)
-            data_array = np.append(data_array, x)
-        invcov = np.linalg.inv(self.covmat)
-        chi2 = np.dot(np.dot(data_array,invcov),data_array)
-        loglike = - 0.5*chi2
-        #print(loglike)        
-
-        return loglike
+        theory = np.asarray(self.provider.get_Hubble(self.z, units="km/s/Mpc"))
+        residual = self.data - theory
+        return -0.5 * float(residual @ cho_solve(self._chol, residual))

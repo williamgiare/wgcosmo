@@ -1,60 +1,32 @@
+"""Diagonal Gaussian forecast likelihood for gravitational-wave distances."""
+from pathlib import Path
+
 import numpy as np
-import scipy.linalg as la
-import pandas as pd
-from pandas import read_table
-import os,sys
 
 try:
     from cobaya.likelihood import Likelihood
-    print('Importiong ET-Like as cobaya likelihood')
-except:
-    class Likelihood:  # dummy class to inherit if cobaya is missing
-        print('dummy class to inherit')
+except ImportError:
+    class Likelihood:
         pass
 
 
 class ET_Like(Likelihood):
-    
-    name: str = "ET_Like"
-    
+    name = "ET_Like"
+    ET_path = None
+
     def initialize(self):
-        
-        current_path = os.path.abspath(__file__)
-        like_path= os.path.abspath(os.path.join(current_path, os.pardir))
-        self.ET_path=like_path +'/data/ET.txt'
-        
-        ET_GWs = pd.read_csv(self.ET_path, sep='\s+', header=None, names=['z', 'DL', 'dDL']).sort_values(by='z')
-        
-        self.z = np.array([], 'float64')
-        self.data = np.array([], 'float64')
-        self.error = np.array([], 'float64')
-        
-        self.z=ET_GWs['z']
-        self.data=ET_GWs['DL']
-        self.error=ET_GWs['dDL']
-        self.num_GW=len(self.z)
+        self.ET_path = self.ET_path or str(Path(__file__).resolve().parent / "data/ET.txt")
+        table = np.loadtxt(self.ET_path, ndmin=2)
+        table = table[np.argsort(table[:, 0], kind="stable")]
+        self.z, self.data, self.error = table.T
+        self.num_GW = len(table)
+        if not np.isfinite(table).all() or np.any(self.error <= 0):
+            raise ValueError("Forecast data must be finite with positive errors")
 
     def get_requirements(self):
-        """
-         return dictionary specifying quantities calculated by a theory code are needed
-        """
-        reqs = {"angular_diameter_distance": {"z": self.z}}
+        return {"angular_diameter_distance": {"z": self.z}}
 
-        return reqs
-    
     def logp(self, **params_values):
-        
-        data_array = np.array([], 'float64')
-        chi2 = 0.
-        
-        for i in range(self.num_GW):
-            da = self.provider.get_angular_diameter_distance(self.z[i])
-            dl = da*(1+self.z[i])**2
-            x = (self.data[i]-dl)**2 / (self.error[i])**2
-            data_array = np.append(data_array, x)
-            
-        chi2 = np.sum(data_array)
-        #print(chi2)
-        loglike = - 0.5*chi2
-        
-        return loglike
+        da = np.asarray(self.provider.get_angular_diameter_distance(self.z))
+        residual = (self.data - da * (1 + self.z)**2) / self.error
+        return -0.5 * float(residual @ residual)

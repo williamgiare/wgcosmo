@@ -62,5 +62,6 @@ class TheoryCalculator:
         return self.cosmo.rs_drag()
 
     def __del__(self):
-        self.cosmo.struct_cleanup()
-        self.cosmo.empty()
+        if hasattr(self, "cosmo"):
+            self.cosmo.struct_cleanup()
+            self.cosmo.empty()

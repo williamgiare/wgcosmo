@@ -6,7 +6,6 @@ theory:
       N_ur: 2.0328
 likelihood:
   compressed_CMB:
-    #python_path: /home/giare/codes/ExLike/compressed_CMB
     python_path: .
     compression_basis: [omega_b, omega_m, 1/theta_d]
     z_drag_n: 20001

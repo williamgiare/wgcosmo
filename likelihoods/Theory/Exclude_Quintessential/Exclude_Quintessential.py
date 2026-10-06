@@ -7,13 +7,9 @@ class Phantom:
 
     @staticmethod
     def is_quintessential(w, wa):
-        z = np.linspace(0, 1100)
-        a = 1 / (z + 1)
-        wDE = w + wa * (1 - a)
-        for i in wDE:
-            if i > -1:
-                return True  # Trovato almeno un elemento negativo
-        return False  # Nessun elemento negativo trovato
+        # CPL is linear in scale factor, so its extrema are at the endpoints.
+        endpoints = np.array([w, w + wa * (1 - 1 / 1101)])
+        return bool(np.any(endpoints > -1))
 
     @staticmethod
     def loglike(w, wa):

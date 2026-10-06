@@ -5,7 +5,7 @@ are provided in Pantheon+SH0ES.dat
 
 Statistical and Stat+Systematic Covariance matrices are provided in
 Pantheon+SH0ES_STATONLY.cov
-Pantheon+SH0ES_STAT+SYS.cov
+../../data/Pantheon+SH0ES_STAT+SYS.cov (shared by both likelihoods and plotting helpers)
 
 The format of the covariance file is NxN lines where the matrix should be read in sequentially.  The first line gives the number of rows/columns in the matrix (N=1701).  The STATONLY matrix has only elements that correspond to the statistical distance uncertainties for individual SNe.  The STAT+SYS matrix also includes all the covariance between SNe (and also Cepheid host covariance) due to systematic uncertainties.
 
